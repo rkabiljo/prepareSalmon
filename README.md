@@ -10,8 +10,22 @@ wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencod
 
 ```
 
-## prepare index files for Salmon 
+## prepare index files for Salmon - probably not needed in this new version.  See below what to do instead
 ```
 bash scripts/generateDecoyTranscriptome.sh -a /scratch/pawsey0360/rkabiljo/Hg38RefForSalmon/gencode.v38.chr_patch_hapl_scaff.annotation.gtf -g /scratch/pawsey0360/rkabiljo/Hg38RefForSalmon/hg38.p13.fa -t /scratch/pawsey0360/rkabiljo/Hg38RefForSalmon/gencode.v38.transcripts.fa -o /scratch/pawsey0360/rkabiljo/salmon_index_HSfullP13 
 
 ```
+
+### not through the generateDecoyTranscriptome.sh
+This is what I found here: https://combine-lab.github.io/alevin-tutorial/2019/selective-alignment/
+
+```
+grep "^>" hg38.p13.fa | cut -d " " -f 1 > decoys.txt
+sed -i.bak -e 's/>//g' decoys.txt
+cat gencode.v38.transcripts.fa hg38.p13.fa > gentrome.fa
+
+salmon index -t gentrome.fa.gz -d decoys.txt -p 12 -i salmon_index --gencode
+```
+
+
+
